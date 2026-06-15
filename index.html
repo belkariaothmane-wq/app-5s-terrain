@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Audit 5S Terrain</title>
+  <style>
+    :root {
+      --bg: #F5EFE6;
+      --text: #1a1008;
+      --accent: #C2681A;
+      --accent-dark: #8d4812;
+      --card: #fffaf3;
+      --muted: #7b6756;
+      --border: #ead9c8;
+      --ok: #277a42;
+      --bad: #b83232;
+      --warn: #c47a00;
+      --info: #2c5f8f;
+      --shadow: 0 10px 28px rgba(43, 25, 10, 0.10);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #fff8ee 0%, var(--bg) 45%, #efe1d1 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+      padding-bottom: 90px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: -18px -18px 18px;
+      padding: 14px 18px;
+      background: rgba(245, 239, 230, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(234, 217, 200, 0.8);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 5vw, 2.5rem);
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: clamp(1.25rem, 4vw, 1.8rem);
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      line-height: 1.45;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 8px 0 0;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 250, 243, 0.92);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .hero {
+      padding: 28px 20px;
+      background:
+        linear-gradient(135deg, rgba(194,104,26,0.12), rgba(255,250,243,0.95)),
+        var(--card);
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 700px) {
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    button, .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      min-height: 52px;
+      transition: transform .12s ease, opacity .12s ease, background .12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: inherit;
+      text-align: center;
+      width: 100%;
+    }
+
+    button:active, .btn:active {
+      transform: scale(0.98);
+    }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .secondary {
+      background: #fff3e5;
+      color: var(--text);
+      border: 1px solid #e9cbae;
+    }
+
+    .ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .danger {
+      background: #ffe9e9;
+      color: var(--bad);
+      border: 1px solid #f4bcbc;
+    }
+
+    .success {
+      background: #e8f7ed;
+      color: var(--ok);
+      border: 1px solid #bde5c7;
+    }
+
+    .warning {
+      background: #fff2d9;
+      color: #8a5100;
+      border: 1px solid #f4d199;
+    }
+
+    .small-btn {
+      min-height: 42px;
+      padding: 10px 12px;
+      font-size: .92rem;
+      border-radius: 12px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 13px;
+      border: 1px solid #ddcbb9;
+      background: #fffdf9;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 7px;
+      font-size: .92rem;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .screen {
+      display: none;
+      animation: fade .18s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: .4; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: .82rem;
+      font-weight: 900;
+      background: #fff2df;
+      color: #6e3506;
+      border: 1px solid #efcfaa;
+    }
+
+    .pill.ok {
+      background: #e8f7ed;
+      color: var(--ok);
+      border-color: #bde5c7;
+    }
+
+    .pill.bad {
+      background: #ffe9e9;
+      color: var(--bad);
+      border-color: #f4bcbc;
+    }
+
+    .pill.warn {
+      background: #fff2d9;
+      color: var(--warn);
+      border-color: #f1d296;
+    }
+
+    .pill.info {
+      background: #e8f2fb;
+      color: var(--info);
+      border-color: #bcd9f1;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .between {
+      justify-content: space-between;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    @media (min-width: 760px) {
+      .stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .stat {
+      background: #fffdf9;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .progress-wrap {
+      background: #eadbcb;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 12px;
+      margin: 12px 0 6px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width .2s ease;
+    }
+
+    .question-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin: 14px 0;
+    }
+
+    .answer-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr;
+      margin: 14px 0;
+    }
+
+    @media (min-width: 640px) {
+      .answer-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--border);
+      background: #fffdf9;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .thumb {
+      max-width: 120px;
+      max-height: 90px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      object-fit: cover;
+      margin-top: 8px;
+    }
+
+    .scorebar {
+      height: 10px;
+      background: #eadbcb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 7px;
+    }
+
+    .scorebar span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      border: 1px dashed #ddcbb9;
+      border-radius: 18px;
+      background: rgba(255,255,255,.35);
+    }
+
+    .toast {
+      position: fixed;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      z-index: 99;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #1a1008;
+      color: white;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .toast.show {
+      display: block;
+      animation: toast .2s ease;
+    }
+
+    @keyframes toast {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .danger-zone {
+      border-color: #efb4b4;
+      background: #fff4f4;
+    }
+
+    .mini {
+      font-size: .88rem;
+    }
+
+    .desktop-actions {
+      min-width: 160px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .desktop-actions button {
+      width: auto;
+    }
+
+    @media (max-width: 560px) {
+      .desktop-actions {
+        display: none;
+      }
+    }
+
+    .mobile-back {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .mobile-back {
+        display: inline-flex;
+        width: auto;
+        min-height: 40px;
+        padding: 8px 10px;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .topbar, button, .btn, .toast { display: none !important; }
+      .screen { display: block !important; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">5S</div>
+        <div>
+          <strong>Audit 5S Terrain</strong><br>
+          <span class="muted mini" id="topHint">Mobile-first • atelier • actions</span>
+        </div>
+      </div>
+      <div class="desktop-actions">
+        <button class="ghost small-btn" onclick="goHome()">Accueil</button>
+      </div>
+      <button class="ghost small-btn mobile-back" onclick="goHome()">Accueil</button>
+    </div>
+
+    <section id="home" class="screen active">
+      <div class="card hero">
+        <h1>Audit 5S Terrain</h1>
+        <p class="subtitle">Réalisez vos audits 5S, suivez vos écarts et pilotez vos actions terrain.</p>
+        <div class="stats" id="homeStats"></div>
+      </div>
+
+      <div class="grid grid-3">
+        <button class="primary" onclick="showScreen('startAudit')">🚀 Lancer un audit 5S</button>
+        <button class="secondary" onclick="showOpenActions()">✅ Actions ouvertes</button>
+        <button class="secondary" onclick="showHistory()">📚 Historique des audits</button>
+      </div>
+
+      <div class="card">
+        <h2>Principe</h2>
+        <p class="muted">L’app suit une logique simple : observer, déclarer l’écart, corriger immédiatement si possible, sinon créer une action à suivre.</p>
+        <div class="grid grid-3">
+          <div class="item"><strong>1. Audit</strong><br><span class="muted">25 questions sur les 5 piliers.</span></div>
+          <div class="item"><strong>2. Écart</strong><br><span class="muted">Commentaire, gravité et photo possible.</span></div>
+          <div class="item"><strong>3. Action</strong><br><span class="muted">Clôture avec preuve et historique.</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Données</h2>
+        <div class="grid grid-3">
+          <button class="ghost" onclick="exportData()">Exporter JSON</button>
+          <label class="btn ghost" for="importFile">Importer JSON</label>
+          <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importData(event)">
+          <button class="danger" onclick="clearAllData()">Supprimer toutes les données</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="startAudit" class="screen">
+      <div class="card">
+        <h2>Nouvel audit 5S</h2>
+        <p class="muted">Renseigne les informations de base avant de démarrer la tournée terrain.</p>
+
+        <div class="grid grid-2">
+          <div class="field">
+            <label for="zone">Zone auditée *</label>
+            <input id="zone" placeholder="Ex : Ligne 1, atelier injection, magasin..." />
+          </div>
+          <div class="field">
+            <label for="auditor">Auditeur *</label>
+            <input id="auditor" placeholder="Nom de l’auditeur" />
+          </div>
+          <div class="field">
+            <label for="shift">Équipe / poste</label>
+            <select id="shift">
+              <option>Matin</option>
+              <option>Après-midi</option>
+              <option>Nuit</option>
+              <option>Équipe A</option>
+              <option>Équipe B</option>
+              <option>Équipe C</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="auditType">Type d’audit</label>
+            <select id="auditType">
+              <option>Audit complet</option>
+              <option>Audit rapide</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <button class="primary" onclick="startAudit()">Démarrer l’audit</button>
+          <button class="ghost" onclick="goHome()">Annuler</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="audit" class="screen">
+      <div class="card">
+        <div class="row between">
+          <div>
+            <span class="pill" id="pillarPill">Pilier</span>
+            <span class="pill info" id="questionCounter">Question</span>
+          </div>
+          <span class="muted mini" id="auditZoneLabel"></span>
+        </div>
+
+        <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+        <div class="question-title" id="questionText"></div>
+
+        <div class="answer-grid" id="answerButtons">
+          <button class="success" onclick="answerQuestion('conforme')">Conforme</button>
+          <button class="danger" onclick="openNonConformityForm()">Non conforme</button>
+          <button class="ghost" onclick="answerQuestion('na')">Non applicable</button>
+        </div>
+
+        <div id="ncForm" class="hidden">
+          <div class="divider"></div>
+          <h3>Écart constaté</h3>
+
+          <div class="field">
+            <label for="ncComment">Commentaire de l’écart *</label>
+            <textarea id="ncComment" placeholder="Décris l’écart observé..."></textarea>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="severity">Gravité</label>
+              <select id="severity">
+                <option>Faible</option>
+                <option>Moyen</option>
+                <option>Élevé</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="beforePhoto">Photo avant</label>
+              <input id="beforePhoto" type="file" accept="image/*" capture="environment" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Traitement de l’écart *</label>
+            <div class="grid grid-2">
+              <button class="warning" onclick="selectTreatment('immediate')">Corrigé immédiatement</button>
+              <button class="secondary" onclick="selectTreatment('action')">Action à suivre</button>
+            </div>
+          </div>
+
+          <div id="immediateFields" class="hidden">
+            <div class="divider"></div>
+            <h3>Correction immédiate</h3>
+            <div class="field">
+              <label for="fixComment">Commentaire de correction *</label>
+              <textarea id="fixComment" placeholder="Ex : palette retirée, outil remis à sa place..."></textarea>
+            </div>
+            <div class="grid grid-2">
+              <div class="field">
+                <label for="fixedBy">Corrigé par *</label>
+                <input id="fixedBy" placeholder="Nom de la personne" />
+              </div>
+              <div class="field">
+                <label for="afterPhotoImmediate">Photo après</label>
+                <input id="afterPhotoImmediate" type="file" accept="image/*" capture="environment" />
+              </div>
+            </div>
+            <button class="primary" onclick="saveImmediateCorrection()">Valider correction immédiate</button>
+          </div>
+
+          <div id="actionFields" class="hidden">
+            <div class="divider"></div>
+            <h3>Action corrective</h3>
+            <div class="field">
+              <label for="actionText">Action à réaliser *</label>
+              <textarea id="actionText" placeholder="Décris l’action corrective..."></textarea>
+            </div>
+            <div class="grid grid-3">
+              <div class="field">
+                <label for="responsible">Responsable *</label>
+                <input id="responsible" placeholder="Nom du responsable" />
+              </div>
+              <div class="field">
+                <label for="dueDate">Date cible *</label>
+                <input id="dueDate" type="date" />
+              </div>
+              <div class="field">
+                <label for="priority">Priorité</label>
+                <select id="priority">
+                  <option>Basse</option>
+                  <option selected>Moyenne</option>
+                  <option>Haute</option>
+                </select>
+              </div>
+            </div>
+            <button class="primary" onclick="saveActionNC()">Créer l’action</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="grid grid-3">
+          <button class="ghost" onclick="previousQuestion()">Question précédente</button>
+          <button class="danger" onclick="cancelAudit()">Arrêter l’audit</button>
+          <button class="ghost" onclick="resetCurrentAudit()">Réinitialiser l’audit</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="screen">
+      <div class="card">
+        <h2>Synthèse de l’audit</h2>
+        <div id="summaryContent"></div>
+        <div class="grid grid-2">
+          <button class="primary" onclick="saveAudit()">Enregistrer l’audit</button>
+          <button class="ghost" onclick="showScreen('audit')">Retour à l’audit</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="actions" class="screen">
+      <div class="card">
+        <div class="row between">
+          <h2>Actions ouvertes</h2>
+          <button class="ghost small-btn" style="width:auto" onclick="goHome()">Retour</button>
+        </div>
+        <div id="actionsList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="history" class="screen">
+      <div class="card">
+        <div class="row between">
+          <h2>Historique des audits</h2>
+          <button class="ghost small-btn" style="width:auto" onclick="goHome()">Retour</button>
+        </div>
+        <div id="historyList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="auditDetail" class="screen">
+      <div class="card">
+        <div class="row between">
+          <h2>Détail audit</h2>
+          <button class="ghost small-btn" style="width:auto" onclick="showHistory()">Retour historique</button>
+        </div>
+        <div id="auditDetailContent"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "audit5sTerrainDataV1";
+
+    const QUESTIONS = [
+      {
+        pillar: "Trier",
+        items: [
+          "Les objets inutiles sont-ils absents du poste ?",
+          "Les outils non utilisés sont-ils retirés de la zone ?",
+          "Les documents obsolètes sont-ils supprimés ou identifiés ?",
+          "Les pièces non conformes sont-elles isolées ou évacuées ?",
+          "Les consommables inutiles sont-ils retirés de la zone ?"
+        ]
+      },
+      {
+        pillar: "Ranger",
+        items: [
+          "Chaque outil a-t-il un emplacement défini ?",
+          "Les emplacements sont-ils visibles et identifiés ?",
+          "Les allées et accès sont-ils dégagés ?",
+          "Les pièces et composants sont-ils rangés correctement ?",
+          "Les moyens de manutention sont-ils à leur place ?"
+        ]
+      },
+      {
+        pillar: "Nettoyer",
+        items: [
+          "Le poste de travail est-il propre ?",
+          "Le sol est-il propre et sans fuite ?",
+          "Les machines ou équipements sont-ils propres ?",
+          "Les zones difficiles d’accès sont-elles entretenues ?",
+          "Les déchets sont-ils évacués correctement ?"
+        ]
+      },
+      {
+        pillar: "Standardiser",
+        items: [
+          "Les standards visuels sont-ils présents ?",
+          "Les consignes affichées sont-elles à jour ?",
+          "Les marquages au sol sont-ils visibles et respectés ?",
+          "Les checklists ou routines sont-elles utilisées ?",
+          "Les niveaux mini/maxi sont-ils visibles si nécessaire ?"
+        ]
+      },
+      {
+        pillar: "Pérenniser",
+        items: [
+          "Les règles 5S sont-elles respectées par l’équipe ?",
+          "Les écarts précédents ont-ils été corrigés ?",
+          "Les audits sont-ils réalisés régulièrement ?",
+          "Les responsables d’actions sont-ils clairement identifiés ?",
+          "Le management suit-il les actions ouvertes ?"
+        ]
+      }
+    ];
+
+    const flatQuestions = QUESTIONS.flatMap(group =>
+      group.items.map((text, index) => ({
+        id: `${group.pillar}-${index + 1}`,
+        pillar: group.pillar,
+        text
+      }))
+    );
+
+    let db = loadDb();
+    let currentAudit = null;
+    let currentIndex = 0;
+    let selectedTreatment = null;
+
+    function loadDb() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : { audits: [] };
+      } catch (e) {
+        return { audits: [] };
+      }
+    }
+
+    function saveDb() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      renderHomeStats();
+    }
+
+    function uid(prefix = "id") {
+      return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    }
+
+    function todayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function nowLocal() {
+      return new Date().toLocaleString("fr-FR");
+    }
+
+    function escapeHtml(str = "") {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function goHome() {
+      renderHomeStats();
+      showScreen("home");
+    }
+
+    function renderHomeStats() {
+      const actions = getAllActions().filter(a => a.status !== "Clôturée");
+      const late = actions.filter(isLate).length;
+      const audits = db.audits.length;
+      const avg = audits ? Math.round(db.audits.reduce((sum, a) => sum + a.scores.global, 0) / audits) : 0;
+
+      document.getElementById("homeStats").innerHTML = `
+        <div class="stat"><strong>${audits}</strong><span class="muted">Audits enregistrés</span></div>
+        <div class="stat"><strong>${avg}%</strong><span class="muted">Score moyen</span></div>
+        <div class="stat"><strong>${actions.length}</strong><span class="muted">Actions ouvertes</span></div>
+        <div class="stat"><strong>${late}</strong><span class="muted">Actions en retard</span></div>
+      `;
+    }
+
+    function startAudit() {
+      const zone = document.getElementById("zone").value.trim();
+      const auditor = document.getElementById("auditor").value.trim();
+      const shift = document.getElementById("shift").value;
+      const auditType = document.getElementById("auditType").value;
+
+      if (!zone || !auditor) {
+        showToast("Zone auditée et auditeur sont obligatoires.");
+        return;
+      }
+
+      currentAudit = {
+        id: uid("audit"),
+        zone,
+        auditor,
+        shift,
+        auditType,
+        date: todayIso(),
+        startedAt: nowLocal(),
+        questions: flatQuestions.map(q => ({ ...q, answer: null, nc: null })),
+        saved: false
+      };
+
+      currentIndex = 0;
+      selectedTreatment = null;
+      clearNcForm();
+      renderQuestion();
+      showScreen("audit");
+    }
+
+    function renderQuestion() {
+      if (!currentAudit) return goHome();
+
+      if (currentIndex >= currentAudit.questions.length) {
+        renderSummary();
+        showScreen("summary");
+        return;
+      }
+
+      const q = currentAudit.questions[currentIndex];
+      document.getElementById("pillarPill").textContent = q.pillar;
+      document.getElementById("questionCounter").textContent = `Question ${currentIndex + 1} / ${currentAudit.questions.length}`;
+      document.getElementById("auditZoneLabel").textContent = currentAudit.zone;
+      document.getElementById("questionText").textContent = q.text;
+      document.getElementById("progressBar").style.width = `${Math.round((currentIndex / currentAudit.questions.length) * 100)}%`;
+
+      clearNcForm();
+      if (q.answer === "non_conforme" && q.nc) {
+        document.getElementById("ncComment").value = q.nc.comment || "";
+        document.getElementById("severity").value = q.nc.severity || "Moyen";
+      }
+    }
+
+    function answerQuestion(type) {
+      const q = currentAudit.questions[currentIndex];
+      if (type === "conforme") {
+        q.answer = "conforme";
+        q.nc = null;
+        nextQuestion();
+      } else if (type === "na") {
+        q.answer = "na";
+        q.nc = null;
+        nextQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      renderQuestion();
+    }
+
+    function previousQuestion() {
+      if (!currentAudit) return;
+      currentIndex = Math.max(0, currentIndex - 1);
+      renderQuestion();
+    }
+
+    function openNonConformityForm() {
+      document.getElementById("ncForm").classList.remove("hidden");
+      selectedTreatment = null;
+      document.getElementById("immediateFields").classList.add("hidden");
+      document.getElementById("actionFields").classList.add("hidden");
+    }
+
+    function selectTreatment(type) {
+      selectedTreatment = type;
+      document.getElementById("immediateFields").classList.toggle("hidden", type !== "immediate");
+      document.getElementById("actionFields").classList.toggle("hidden", type !== "action");
+    }
+
+    function clearNcForm() {
+      document.getElementById("ncForm").classList.add("hidden");
+      document.getElementById("immediateFields").classList.add("hidden");
+      document.getElementById("actionFields").classList.add("hidden");
+
+      ["ncComment", "fixComment", "fixedBy", "actionText", "responsible", "dueDate"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+
+      ["beforePhoto", "afterPhotoImmediate"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+
+      document.getElementById("severity").value = "Faible";
+      document.getElementById("priority").value = "Moyenne";
+      selectedTreatment = null;
+    }
+
+    async function saveImmediateCorrection() {
+      const comment = document.getElementById("ncComment").value.trim();
+      const severity = document.getElementById("severity").value;
+      const fixComment = document.getElementById("fixComment").value.trim();
+      const fixedBy = document.getElementById("fixedBy").value.trim();
+
+      if (!comment || !fixComment || !fixedBy) {
+        showToast("Commentaire écart, correction et corrigé par sont obligatoires.");
+        return;
+      }
+
+      const beforePhoto = await readImageAsBase64("beforePhoto");
+      const afterPhoto = await readImageAsBase64("afterPhotoImmediate");
+
+      const q = currentAudit.questions[currentIndex];
+      q.answer = "non_conforme";
+      q.nc = {
+        id: uid("nc"),
+        type: "immediate",
+        status: "Clôturé immédiatement",
+        comment,
+        severity,
+        beforePhoto,
+        fixComment,
+        fixedBy,
+        afterPhoto,
+        fixedAt: nowLocal()
+      };
+
+      showToast("Écart corrigé immédiatement enregistré.");
+      nextQuestion();
+    }
+
+    async function saveActionNC() {
+      const comment = document.getElementById("ncComment").value.trim();
+      const severity = document.getElementById("severity").value;
+      const actionText = document.getElementById("actionText").value.trim();
+      const responsible = document.getElementById("responsible").value.trim();
+      const dueDate = document.getElementById("dueDate").value;
+      const priority = document.getElementById("priority").value;
+
+      if (!comment || !actionText || !responsible || !dueDate) {
+        showToast("Commentaire, action, responsable et date cible sont obligatoires.");
+        return;
+      }
+
+      const beforePhoto = await readImageAsBase64("beforePhoto");
+
+      const q = currentAudit.questions[currentIndex];
+      q.answer = "non_conforme";
+      q.nc = {
+        id: uid("nc"),
+        type: "action",
+        status: "Ouverte",
+        comment,
+        severity,
+        beforePhoto,
+        action: {
+          id: uid("action"),
+          text: actionText,
+          responsible,
+          dueDate,
+          priority,
+          status: "Ouverte",
+          createdAt: nowLocal(),
+          closureComment: "",
+          afterPhoto: "",
+          closedAt: ""
+        }
+      };
+
+      showToast("Action corrective créée.");
+      nextQuestion();
+    }
+
+    function cancelAudit() {
+      if (confirm("Arrêter l’audit en cours ? Les réponses non enregistrées seront perdues.")) {
+        currentAudit = null;
+        currentIndex = 0;
+        goHome();
+      }
+    }
+
+    function resetCurrentAudit() {
+      if (!currentAudit) return;
+      if (confirm("Réinitialiser toutes les réponses de cet audit ?")) {
+        currentAudit.questions.forEach(q => {
+          q.answer = null;
+          q.nc = null;
+        });
+        currentIndex = 0;
+        renderQuestion();
+        showToast("Audit réinitialisé.");
+      }
+    }
+
+    function calculateScores(audit) {
+      const applicable = audit.questions.filter(q => q.answer && q.answer !== "na");
+      const conformes = audit.questions.filter(q => q.answer === "conforme");
+      const nonConformes = audit.questions.filter(q => q.answer === "non_conforme");
+      const immediate = nonConformes.filter(q => q.nc?.type === "immediate");
+      const actionsOpen = nonConformes.filter(q => q.nc?.type === "action" && q.nc.action.status !== "Clôturée");
+
+      const global = applicable.length ? Math.round((conformes.length / applicable.length) * 100) : 0;
+
+      const byPillar = {};
+      QUESTIONS.forEach(group => {
+        const qs = audit.questions.filter(q => q.pillar === group.pillar);
+        const app = qs.filter(q => q.answer && q.answer !== "na");
+        const ok = qs.filter(q => q.answer === "conforme");
+        byPillar[group.pillar] = app.length ? Math.round((ok.length / app.length) * 100) : null;
+      });
+
+      const weakest = Object.entries(byPillar)
+        .filter(([, score]) => score !== null)
+        .sort((a, b) => a[1] - b[1])[0];
+
+      return {
+        global,
+        byPillar,
+        conformes: conformes.length,
+        nonConformes: nonConformes.length,
+        immediate: immediate.length,
+        actionsOpen: actionsOpen.length,
+        na: audit.questions.filter(q => q.answer === "na").length,
+        weakestPillar: weakest ? weakest[0] : "Non disponible"
+      };
+    }
+
+    function renderSummary() {
+      const unanswered = currentAudit.questions.filter(q => !q.answer).length;
+      if (unanswered > 0) {
+        currentIndex = currentAudit.questions.findIndex(q => !q.answer);
+        showToast("Certaines questions ne sont pas encore renseignées.");
+        renderQuestion();
+        showScreen("audit");
+        return;
+      }
+
+      const scores = calculateScores(currentAudit);
+      currentAudit.scores = scores;
+
+      const pillarHtml = Object.entries(scores.byPillar).map(([pillar, score]) => `
+        <div class="item">
+          <strong>${pillar}</strong>
+          <div class="row between"><span class="muted">Score</span><strong>${score === null ? "N/A" : score + "%"}</strong></div>
+          <div class="scorebar"><span style="width:${score || 0}%"></span></div>
+        </div>
+      `).join("");
+
+      const ncHtml = currentAudit.questions
+        .filter(q => q.answer === "non_conforme")
+        .map(q => renderNcItem(q))
+        .join("");
+
+      document.getElementById("summaryContent").innerHTML = `
+        <div class="stats">
+          <div class="stat"><strong>${scores.global}%</strong><span class="muted">Score global</span></div>
+          <div class="stat"><strong>${scores.nonConformes}</strong><span class="muted">NC détectées</span></div>
+          <div class="stat"><strong>${scores.immediate}</strong><span class="muted">Corrigées direct</span></div>
+          <div class="stat"><strong>${scores.actionsOpen}</strong><span class="muted">Actions ouvertes</span></div>
+        </div>
+
+        <div class="item">
+          <strong>Informations</strong><br>
+          <span class="muted">Zone :</span> ${escapeHtml(currentAudit.zone)}<br>
+          <span class="muted">Auditeur :</span> ${escapeHtml(currentAudit.auditor)}<br>
+          <span class="muted">Date :</span> ${escapeHtml(currentAudit.date)}<br>
+          <span class="muted">Équipe :</span> ${escapeHtml(currentAudit.shift)}<br>
+          <span class="muted">Type :</span> ${escapeHtml(currentAudit.auditType)}<br>
+          <span class="muted">Pilier le plus faible :</span> <strong>${escapeHtml(scores.weakestPillar)}</strong>
+        </div>
+
+        <h3>Scores par pilier</h3>
+        <div class="list">${pillarHtml}</div>
+
+        <h3 style="margin-top:16px;">Écarts constatés</h3>
+        <div class="list">${ncHtml || `<div class="empty">Aucun écart constaté.</div>`}</div>
+      `;
+    }
+
+    function renderNcItem(q) {
+      const nc = q.nc;
+      const isImmediate = nc.type === "immediate";
+      const photo = nc.beforePhoto ? `<img class="thumb" src="${nc.beforePhoto}" alt="Photo avant">` : "";
+      const after = isImmediate && nc.afterPhoto ? `<img class="thumb" src="${nc.afterPhoto}" alt="Photo après">` : "";
+
+      return `
+        <div class="item">
+          <div class="row">
+            <span class="pill bad">${escapeHtml(q.pillar)}</span>
+            <span class="pill ${isImmediate ? "ok" : "warn"}">${isImmediate ? "Corrigé immédiatement" : "Action à suivre"}</span>
+            <span class="pill">${escapeHtml(nc.severity)}</span>
+          </div>
+          <p><strong>${escapeHtml(q.text)}</strong></p>
+          <p><span class="muted">Écart :</span> ${escapeHtml(nc.comment)}</p>
+          ${photo}
+          ${isImmediate ? `
+            <p><span class="muted">Correction :</span> ${escapeHtml(nc.fixComment)}</p>
+            <p><span class="muted">Corrigé par :</span> ${escapeHtml(nc.fixedBy)} — ${escapeHtml(nc.fixedAt)}</p>
+            ${after}
+          ` : `
+            <p><span class="muted">Action :</span> ${escapeHtml(nc.action.text)}</p>
+            <p><span class="muted">Responsable :</span> ${escapeHtml(nc.action.responsible)} — <span class="muted">Date cible :</span> ${escapeHtml(nc.action.dueDate)}</p>
+          `}
+        </div>
+      `;
+    }
+
+    function saveAudit() {
+      if (!currentAudit) return;
+      currentAudit.savedAt = nowLocal();
+      currentAudit.scores = calculateScores(currentAudit);
+      db.audits.unshift(JSON.parse(JSON.stringify(currentAudit)));
+      saveDb();
+
+      currentAudit = null;
+      currentIndex = 0;
+      document.getElementById("zone").value = "";
+      document.getElementById("auditor").value = "";
+
+      showToast("Audit enregistré avec succès.");
+      goHome();
+    }
+
+    function getAllActions() {
+      const actions = [];
+      db.audits.forEach(audit => {
+        audit.questions.forEach(q => {
+          if (q.nc?.type === "action") {
+            actions.push({
+              auditId: audit.id,
+              auditDate: audit.date,
+              zone: audit.zone,
+              auditor: audit.auditor,
+              pillar: q.pillar,
+              questionId: q.id,
+              question: q.text,
+              ncId: q.nc.id,
+              ncComment: q.nc.comment,
+              beforePhoto: q.nc.beforePhoto,
+              severity: q.nc.severity,
+              ...q.nc.action
+            });
+          }
+        });
+      });
+      return actions;
+    }
+
+    function isLate(action) {
+      if (action.status === "Clôturée") return false;
+      const today = new Date(todayIso());
+      const due = new Date(action.dueDate);
+      return due < today;
+    }
+
+    function showOpenActions() {
+      const actions = getAllActions().filter(a => a.status !== "Clôturée");
+      const html = actions.length ? actions.map(renderAction).join("") : `<div class="empty">Aucune action ouverte.</div>`;
+      document.getElementById("actionsList").innerHTML = html;
+      showScreen("actions");
+    }
+
+    function renderAction(a) {
+      const status = isLate(a) ? "En retard" : a.status;
+      const pillClass = status === "En retard" ? "bad" : status === "En cours" ? "info" : "warn";
+      const photo = a.beforePhoto ? `<img class="thumb" src="${a.beforePhoto}" alt="Photo avant">` : "";
+
+      return `
+        <div class="item">
+          <div class="row">
+            <span class="pill ${pillClass}">${escapeHtml(status)}</span>
+            <span class="pill">${escapeHtml(a.priority)}</span>
+            <span class="pill bad">${escapeHtml(a.severity)}</span>
+          </div>
+          <p><strong>${escapeHtml(a.zone)} — ${escapeHtml(a.pillar)}</strong></p>
+          <p><span class="muted">Question :</span> ${escapeHtml(a.question)}</p>
+          <p><span class="muted">Écart :</span> ${escapeHtml(a.ncComment)}</p>
+          <p><span class="muted">Action :</span> ${escapeHtml(a.text)}</p>
+          <p><span class="muted">Responsable :</span> ${escapeHtml(a.responsible)}<br>
+          <span class="muted">Date cible :</span> ${escapeHtml(a.dueDate)}</p>
+          ${photo}
+          <div class="grid grid-2" style="margin-top:12px;">
+            <button class="secondary small-btn" onclick="setActionInProgress('${a.auditId}', '${a.questionId}', '${a.id}')">Passer en cours</button>
+            <button class="primary small-btn" onclick="openCloseAction('${a.auditId}', '${a.questionId}', '${a.id}')">Clôturer</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function findAction(auditId, questionId, actionId) {
+      const audit = db.audits.find(a => a.id === auditId);
+      if (!audit) return null;
+      const q = audit.questions.find(q => q.id === questionId);
+      if (!q?.nc?.action || q.nc.action.id !== actionId) return null;
+      return { audit, q, action: q.nc.action };
+    }
+
+    function setActionInProgress(auditId, questionId, actionId) {
+      const found = findAction(auditId, questionId, actionId);
+      if (!found) return;
+      found.action.status = "En cours";
+      saveDb();
+      showToast("Action passée en cours.");
+      showOpenActions();
+    }
+
+    async function openCloseAction(auditId, questionId, actionId) {
+      const comment = prompt("Commentaire de clôture obligatoire :");
+      if (!comment || !comment.trim()) {
+        showToast("Clôture annulée : commentaire obligatoire.");
+        return;
+      }
+
+      const found = findAction(auditId, questionId, actionId);
+      if (!found) return;
+
+      found.action.status = "Clôturée";
+      found.action.closureComment = comment.trim();
+      found.action.closedAt = nowLocal();
+      found.audit.scores = calculateScores(found.audit);
+
+      saveDb();
+      showToast("Action clôturée.");
+      showOpenActions();
+    }
+
+    function showHistory() {
+      const html = db.audits.length ? db.audits.map(audit => `
+        <div class="item" onclick="showAuditDetail('${audit.id}')" style="cursor:pointer">
+          <div class="row between">
+            <strong>${escapeHtml(audit.zone)}</strong>
+            <span class="pill">${audit.scores.global}%</span>
+          </div>
+          <p class="muted">${escapeHtml(audit.date)} • ${escapeHtml(audit.auditor)} • ${escapeHtml(audit.shift)}</p>
+          <div class="row">
+            <span class="pill bad">${audit.scores.nonConformes} NC</span>
+            <span class="pill ok">${audit.scores.immediate} corrigées direct</span>
+            <span class="pill warn">${audit.scores.actionsOpen} actions ouvertes</span>
+          </div>
+        </div>
+      `).join("") : `<div class="empty">Aucun audit enregistré.</div>`;
+
+      document.getElementById("historyList").innerHTML = html;
+      showScreen("history");
+    }
+
+    function showAuditDetail(auditId) {
+      const audit = db.audits.find(a => a.id === auditId);
+      if (!audit) return;
+
+      const scores = calculateScores(audit);
+      const answers = audit.questions.map(q => {
+        const status = q.answer === "conforme" ? "Conforme" : q.answer === "na" ? "Non applicable" : "Non conforme";
+        const cls = q.answer === "conforme" ? "ok" : q.answer === "na" ? "info" : "bad";
+        return `
+          <div class="item">
+            <div class="row">
+              <span class="pill">${escapeHtml(q.pillar)}</span>
+              <span class="pill ${cls}">${status}</span>
+            </div>
+            <p><strong>${escapeHtml(q.text)}</strong></p>
+            ${q.nc ? renderNcItem(q) : ""}
+          </div>
+        `;
+      }).join("");
+
+      const scoreHtml = Object.entries(scores.byPillar).map(([p, s]) => `
+        <div class="item">
+          <div class="row between"><strong>${escapeHtml(p)}</strong><strong>${s === null ? "N/A" : s + "%"}</strong></div>
+          <div class="scorebar"><span style="width:${s || 0}%"></span></div>
+        </div>
+      `).join("");
+
+      document.getElementById("auditDetailContent").innerHTML = `
+        <div class="stats">
+          <div class="stat"><strong>${scores.global}%</strong><span class="muted">Score global</span></div>
+          <div class="stat"><strong>${scores.nonConformes}</strong><span class="muted">NC détectées</span></div>
+          <div class="stat"><strong>${scores.immediate}</strong><span class="muted">Corrigées direct</span></div>
+          <div class="stat"><strong>${scores.actionsOpen}</strong><span class="muted">Actions ouvertes</span></div>
+        </div>
+        <div class="item">
+          <strong>${escapeHtml(audit.zone)}</strong><br>
+          <span class="muted">Auditeur :</span> ${escapeHtml(audit.auditor)}<br>
+          <span class="muted">Date :</span> ${escapeHtml(audit.date)}<br>
+          <span class="muted">Équipe :</span> ${escapeHtml(audit.shift)}<br>
+          <span class="muted">Type :</span> ${escapeHtml(audit.auditType)}<br>
+          <span class="muted">Pilier faible :</span> ${escapeHtml(scores.weakestPillar)}
+        </div>
+        <h3>Scores par pilier</h3>
+        <div class="list">${scoreHtml}</div>
+        <h3 style="margin-top:16px;">Réponses détaillées</h3>
+        <div class="list">${answers}</div>
+      `;
+      showScreen("auditDetail");
+    }
+
+    function clearAllData() {
+      if (confirm("Supprimer définitivement tous les audits et toutes les actions ?")) {
+        db = { audits: [] };
+        saveDb();
+        showToast("Données supprimées.");
+        goHome();
+      }
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `audit-5s-terrain-${todayIso()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Export JSON généré.");
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (!imported.audits || !Array.isArray(imported.audits)) {
+            throw new Error("Format invalide");
+          }
+          if (confirm("Importer ces données ? Cela remplacera les données actuelles.")) {
+            db = imported;
+            saveDb();
+            showToast("Données importées.");
+            goHome();
+          }
+        } catch (e) {
+          showToast("Fichier JSON invalide.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function readImageAsBase64(inputId) {
+      const input = document.getElementById(inputId);
+      const file = input?.files?.[0];
+      if (!file) return Promise.resolve("");
+
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const maxWidth = 900;
+            const scale = Math.min(1, maxWidth / img.width);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", 0.72));
+          };
+          img.onerror = () => resolve(e.target.result);
+          img.src = e.target.result;
+        };
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(file);
+      });
+    }
+
+    renderHomeStats();
+  </script>
+</body>
+</html>
